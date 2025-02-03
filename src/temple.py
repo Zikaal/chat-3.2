@@ -10,6 +10,16 @@ from collections import defaultdict
 from langchain.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
+import os
+from dotenv import load_dotenv
+
+# Загружаем переменные окружения
+load_dotenv()
+
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
+if not openai_api_key:
+    raise ValueError("OPENAI_API_KEY not found. Please set it in the .env file.")
 
 logging.basicConfig(level=logging.INFO)
 
@@ -62,8 +72,6 @@ Provide these alternative questions separated by newlines. Original question: {q
 
 prompt_perspectives = ChatPromptTemplate.from_template(template)
 
-
-openai_api_key = "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"
 
 
 def generate_multi_queries(query_text):
