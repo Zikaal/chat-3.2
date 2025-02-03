@@ -5,6 +5,7 @@ from sentence_transformers import SentenceTransformer
 from pymongo import MongoClient
 import numpy as np
 import requests
+import chardet
 from bs4 import BeautifulSoup
 from collections import defaultdict
 from langchain.prompts import ChatPromptTemplate
@@ -146,6 +147,70 @@ menu = st.sidebar.selectbox("Choose an action", [
     "Show Documents in MongoDB", "Add New Document to MongoDB as Vector",
     "Upload File and Ask Question", "Ask Ollama a Question",
     "Ask Question About Constitution"])
+
+if menu == "Show Documents in MongoDB":
+    st.subheader("Stored Documents in MongoDB")
+    documents = collection.find()
+    if documents:
+        for i, doc in enumerate(documents, start=1):
+            st.write(f"{i}. {doc['document']}")
+    else:
+        st.write("No data available!")
+
+elif menu == "Add New Document to MongoDB as Vector":
+    st.subheader("Add a New Document to MongoDB")
+    new_doc = st.text_area("Enter the new document:")
+    uploaded_file = st.file_uploader("Or upload a .txt file", type=["txt"])
+
+    if st.button("Add Document"):
+        if uploaded_file is not None:
+            try:
+                file_bytes = uploaded_file.read()
+                detected_encoding = chardet.detect(file_bytes)['encoding']
+                if not detected_encoding:
+                    raise ValueError("Failed to detect file encoding.")
+                file_content = file_bytes.decode(detected_encoding)
+
+                doc_id = f"doc{collection.count_documents({}) + 1}"
+                st.write(f"Adding document from file: {uploaded_file.name}")
+                add_document_to_mongodb([file_content], [doc_id])
+                st.success(f"Document added successfully with ID {doc_id}")
+            except Exception as e:
+                st.error(f"Failed to add document: {e}")
+        elif new_doc.strip(): 
+            try:
+                doc_id = f"doc{collection.count_documents({}) + 1}"
+                st.write(f"Adding document: {new_doc}")
+                add_document_to_mongodb([new_doc], [doc_id])
+                st.success(f"Document added successfully with ID {doc_id}")
+            except Exception as e:
+                st.error(f"Failed to add document: {e}")
+        else:
+            st.warning("Please enter a non-empty document or upload a file before adding.")
+
+elif menu == "Upload File and Ask Question":
+    st.subheader("Upload a file and ask a question about its content")
+    uploaded_file = st.file_uploader("Upload a .txt file", type=["txt"])
+
+    if uploaded_file is not None:
+        try:
+            file_bytes = uploaded_file.read()
+            detected_encoding = chardet.detect(file_bytes)['encoding']
+            if not detected_encoding:
+                raise ValueError("Failed to detect file encoding.")
+            file_content = file_bytes.decode(detected_encoding)
+
+            st.write("File content successfully loaded:")
+            st.text_area("File Content", file_content, height=200)
+
+            question = st.text_input("Ask a question about this file's content:")
+            if question:
+                response = query_with_ollama(f"Context: {file_content}\n\nQuestion: {question}\nAnswer:", model)
+                st.write("Response:", response)
+
+        except Exception as e:
+            st.error(f"Failed to process the file: {e}")
+
 
 if menu == "Ask Ollama a Question":
     query = st.text_input("Ask a question")
