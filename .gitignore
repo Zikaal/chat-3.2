@@ -226,3 +226,6 @@ coverage.xml
 *.tmp
 *.old
 *.orig
+
+.env
+
