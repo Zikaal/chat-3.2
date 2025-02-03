@@ -169,3 +169,60 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment variables
+.env
+
+# Virtual environment
+venv/
+env/
+
+# Logs and database
+*.log
+*.db
+*.sqlite3
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Python-specific
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+coverage.xml
+*.cover
+.cache
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# LLM and vector database files
+*.index
+*.hnsw
+*.npy
+
+# Other
+*.bak
+*.tmp
+*.old
+*.orig
