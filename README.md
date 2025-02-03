@@ -62,10 +62,6 @@ streamlit run temple.py
 │   ├── temple.py
 ```
 
-## License
-
-This project is licensed under the MIT License. See `LICENSE` for more details.
-
 ## Contributors
 
 - **Alexandr Chshudro**
