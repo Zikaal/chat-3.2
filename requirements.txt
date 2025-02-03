@@ -7,3 +7,4 @@ sentence-transformers
 langchain
 langchain-ollama
 langchain-openai
+python-dotenv
